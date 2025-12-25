@@ -1,0 +1,164 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Feliz Navidad</title>
+
+<style>
+body{
+    margin:0;
+    height:100vh;
+    background:black;
+    font-family:Arial,sans-serif;
+    color:white;
+    overflow:hidden;
+}
+.pantalla{
+    position:fixed;
+    inset:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+#formulario{
+    background:#111;
+    padding:25px;
+    border-radius:12px;
+    text-align:center;
+}
+input,button{
+    padding:10px;
+    margin:8px;
+    border:none;
+    border-radius:6px;
+}
+button{
+    background:crimson;
+    color:white;
+    cursor:pointer;
+}
+#pantallaRegalo{
+    display:none;
+    cursor:pointer;
+}
+#caja{
+    width:160px;
+    height:160px;
+    background:crimson;
+    border-radius:10px;
+    position:relative;
+}
+#caja::before,#caja::after{
+    content:"";
+    position:absolute;
+    background:gold;
+}
+#caja::before{
+    width:30px;height:100%;left:50%;
+    transform:translateX(-50%);
+}
+#caja::after{
+    height:30px;width:100%;top:50%;
+    transform:translateY(-50%);
+}
+#tapa{
+    position:absolute;
+    top:-30px;left:-10px;
+    width:180px;height:50px;
+    background:darkred;
+    border-radius:10px;
+    transition:1s;
+}
+.abierto #tapa{
+    transform:translateY(-120px) rotate(-20deg);
+    opacity:0;
+}
+#mensaje{
+    position:fixed;
+    inset:0;
+    display:none;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    font-size:26px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="pantalla" id="pantallaForm">
+    <div id="formulario">
+        <h2>¿Cuál es tu nombre?</h2>
+        <input id="nombre" placeholder="Escribe tu nombre">
+        <br>
+        <button id="btnRegistrar">Registrar</button>
+    </div>
+</div>
+
+<div class="pantalla" id="pantallaRegalo">
+    <div id="caja"><div id="tapa"></div></div>
+</div>
+
+<div id="mensaje"></div>
+
+<audio id="musica" preload="auto" loop>
+    <source src="https://cdn.pixabay.com/audio/2022/12/06/audio_9e5b91db6f.mp3">
+</audio>
+
+<script>
+let nombreGuardado="";
+let audioUnlocked=false;
+
+const audio=document.getElementById("musica");
+
+// 🔓 DESBLOQUEO REAL (PRIMER CLICK DEL USUARIO)
+document.addEventListener("click",()=>{
+    if(!audioUnlocked){
+        audio.muted=true;
+        audio.play().then(()=>{
+            audio.pause();
+            audio.currentTime=0;
+            audio.muted=false;
+            audioUnlocked=true;
+            console.log("Audio desbloqueado");
+        });
+    }
+},{once:true});
+
+document.getElementById("btnRegistrar").onclick=()=>{
+    const n=document.getElementById("nombre").value.trim();
+    if(!n){alert("Escribe tu nombre 🎅");return;}
+    nombreGuardado=n;
+    document.getElementById("pantallaForm").style.display="none";
+    document.getElementById("pantallaRegalo").style.display="flex";
+};
+
+document.getElementById("pantallaRegalo").onclick=()=>{
+    const r=document.getElementById("pantallaRegalo");
+    r.classList.add("abierto");
+    setTimeout(()=>{
+        r.style.display="none";
+        mostrarMensaje();
+    },800);
+};
+
+function mostrarMensaje(){
+    const m=document.getElementById("mensaje");
+    m.style.display="flex";
+    m.innerHTML=`
+        🎄 Feliz Navidad<br><br>
+        ${nombreGuardado}<br><br>
+        Te deseo mucha felicidad ✨<br><br>
+        <b>Atte: Ferko 😎</b><br><br>
+        <button id="btnMusica">▶ Activar música 🎶</button>
+    `;
+    document.getElementById("btnMusica").onclick=()=>{
+        audio.volume=0.7;
+        audio.play();
+    };
+}
+</script>
+
+</body>
+</html>
